@@ -17,7 +17,7 @@
 
     .neon-frame {
       width: 90vw;
-      height: 50.625vw; /* Maintain 16:9 aspect ratio */
+      height: 50.625vw; /* 16:9 aspect ratio */
       max-height: 90vh;
       box-shadow:
         0 0 20px #00ffff,
@@ -29,16 +29,19 @@
       overflow: hidden;
     }
 
-    .neon-frame iframe {
+    video {
       width: 100%;
       height: 100%;
-      border: none;
+      object-fit: cover;
     }
   </style>
 </head>
 <body>
   <div class="neon-frame">
-    <iframe src="https://streamable.com/e/5hnnfe" allowfullscreen></iframe>
+    <video controls autoplay playsinline>
+      <source src="https://pixeldrain.com/api/file/pECujeYk" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
 </body>
 </html>
