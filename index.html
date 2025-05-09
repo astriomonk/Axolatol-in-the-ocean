@@ -9,41 +9,44 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      background: #000;
+      background: url('Axolatol pic.jpg') center center / cover no-repeat fixed;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: flex-end;
       align-items: center;
       font-family: sans-serif;
-      color: white;
     }
 
     h1 {
       color: #ff69b4;
       text-shadow: 0 0 10px #ff69b4;
-      margin: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border-radius: 10px;
+      position: absolute;
+      top: 20px;
     }
 
     select {
       background: black;
       border: 2px solid #ff69b4;
       color: #ff69b4;
-      padding: 10px;
+      padding: 8px;
       border-radius: 5px;
       font-size: 16px;
       margin: 10px 0;
     }
 
-    .video-container {
-      width: 80vw;
-      max-width: 1000px;
-      aspect-ratio: 16 / 9;
+    .neon-frame {
+      width: 70vw;
+      height: 39.375vw;
+      max-height: 60vh;
+      box-shadow: 0 0 15px #ff69b4, 0 0 25px #ff69b4, 0 0 40px #ff69b4;
       border: 2px solid #ff69b4;
       border-radius: 12px;
-      box-shadow: 0 0 15px #ff69b4, 0 0 30px #ff69b4;
       overflow: hidden;
       background-color: black;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     video {
@@ -51,35 +54,109 @@
       height: 100%;
       object-fit: cover;
     }
+
+    .sync-button, #kickButton, #unlockAdminButton {
+      padding: 10px 25px;
+      background: black;
+      border: 2px solid #ff69b4;
+      color: #ff69b4;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px;
+      box-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .sync-button:hover, #kickButton:hover, #unlockAdminButton:hover {
+      background: #ff69b4;
+      color: black;
+    }
+
+    #kickButton {
+      display: none;
+    }
+
+    #unlockAdminButton {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+    }
+
+    .admin-panel {
+      display: none;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      color: white;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>Axolotl Video Hub</h1>
 
   <select id="videoSelector">
-    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl Video 1</option>
-    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl Video 2</option>
-    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl Video 3</option>
-    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl Video 4</option>
+    <option value="https://www.youtube.com/embed/VIDEO_ID_1">Axolotl 1</option>
+    <option value="https://www.youtube.com/embed/VIDEO_ID_2">Axolotl 2</option>
+    <option value="https://www.youtube.com/embed/VIDEO_ID_3">Axolotl 3</option>
+    <option value="https://www.youtube.com/embed/VIDEO_ID_4">Axolotl 4</option>
   </select>
 
-  <div class="video-container">
-    <video id="videoPlayer" controls autoplay loop>
-      <source src="https://files.catbox.moe/7juk8a.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+  <button class="sync-button" onclick="syncVideo()">🔁 Sync Video</button>
+  <button id="kickButton" onclick="kickEveryone()">🚫 Kick Everyone</button>
+
+  <!-- Admin Unlock -->
+  <button id="unlockAdminButton" onclick="unlockAdmin()">Unlock Admin</button>
+
+  <div class="neon-frame">
+    <iframe id="videoPlayer" width="100%" height="100%" src="https://www.youtube.com/embed/VIDEO_ID_1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+
+  <div class="admin-panel" id="adminPanel">
+    <h2>Admin Controls</h2>
+    <button onclick="syncVideo()">🔁 Sync Video (For All)</button>
+    <button onclick="kickEveryone()">🚫 Kick Everyone</button>
   </div>
 
   <script>
-    const selector = document.getElementById('videoSelector');
-    const video = document.getElementById('videoPlayer');
-    const source = video.querySelector('source');
+    let isAdmin = false;
 
-    selector.addEventListener('change', () => {
-      source.src = selector.value;
-      video.load();
-      video.play();
+    const selector = document.getElementById('videoSelector');
+    const videoPlayer = document.getElementById('videoPlayer');
+
+    // Handle video selection
+    selector.addEventListener('change', function () {
+      videoPlayer.src = this.value;
     });
+
+    // Sync Video Function (for all)
+    function syncVideo() {
+      const videoIframe = document.getElementById('videoPlayer');
+      videoIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      videoIframe.contentWindow.postMessage('{"event":"command","func":"seekTo","args":[0]}', '*');
+    }
+
+    // Admin Unlock Function
+    function unlockAdmin() {
+      let inputCode = prompt('Enter Admin Code:');
+      if (inputCode === 'ADK999') {
+        isAdmin = true;
+        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('kickButton').style.display = 'inline-block';
+        console.log('Admin unlocked!');
+        alert('Admin unlocked! You can now control the videos.');
+      } else {
+        alert('Incorrect code!');
+      }
+    }
+
+    // Kick Everyone Function
+    function kickEveryone() {
+      document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
+      setTimeout(() => {
+        window.location.href = "https://google.com"; // or any site
+      }, 2500);
+    }
   </script>
 </body>
 </html>
