@@ -45,7 +45,7 @@
       object-fit: cover;
     }
 
-    .sync-button, #kickButton {
+    .sync-button {
       padding: 10px 25px;
       background: black;
       border: 2px solid #ff69b4;
@@ -58,39 +58,25 @@
       transition: background 0.2s, color 0.2s;
     }
 
-    .sync-button:hover, #kickButton:hover {
+    .sync-button:hover {
       background: #ff69b4;
       color: black;
     }
 
-    #kickButton {
+    #adminPanel {
       display: none;
-    }
-
-    /* Password prompt styling */
-    #passwordPrompt {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: rgba(0, 0, 0, 0.6);
-      border: 2px solid #ff69b4;
-      padding: 10px;
-      border-radius: 8px;
-      color: #ff69b4;
-      font-size: 16px;
-      display: flex;
+      flex-direction: column;
       align-items: center;
-      z-index: 999; /* Ensure it stays on top of other elements */
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid #ff69b4;
+      box-shadow: 0 0 20px #ff69b4;
+      margin-top: 20px;
     }
 
-    #passwordInput {
-      background: black;
-      border: 2px solid #ff69b4;
+    #adminPanel h2 {
       color: #ff69b4;
-      padding: 8px;
-      font-size: 16px;
-      border-radius: 5px;
-      margin-left: 10px;
     }
   </style>
 </head>
@@ -104,7 +90,18 @@
   </select>
 
   <button class="sync-button" onclick="syncVideo()">🔁 Sync Video</button>
-  <button id="kickButton" onclick="kickEveryone()">🚫 Kick Everyone</button>
+  <button id="adminButton" class="sync-button" onclick="showAdminPanel()">👑 Admin Panel</button>
+
+  <div id="adminPanel">
+    <h2>Admin Powers</h2>
+    <button class="sync-button" onclick="syncVideo()">🔁 Restart Video</button>
+    <button class="sync-button" onclick="toggleMute()">🎵 Mute/Unmute Video</button>
+    <button class="sync-button" onclick="nextVideo()">🎬 Skip to Next Video</button>
+    <button class="sync-button" onclick="changeBackground()">🎨 Change Background</button>
+    <button class="sync-button" onclick="hideUI()">🧹 Hide UI</button>
+    <button class="sync-button" onclick="kickEveryone()">🚫 Kick Everyone</button>
+    <button class="sync-button" onclick="closeAdminPanel()">🔒 Close Panel</button>
+  </div>
 
   <div class="neon-frame">
     <video id="videoPlayer" controls autoplay>
@@ -113,18 +110,11 @@
     </video>
   </div>
 
-  <!-- Password prompt -->
-  <div id="passwordPrompt">
-    Enter Admin Password:
-    <input type="password" id="passwordInput" placeholder="Enter Code">
-  </div>
-
   <script>
     const selector = document.getElementById('videoSelector');
     const videoTag = document.getElementById('videoPlayer');
     const sourceTag = videoTag.querySelector('source');
-    const passwordInput = document.getElementById('passwordInput');
-    
+
     selector.addEventListener('change', function () {
       sourceTag.src = this.value;
       videoTag.load();
@@ -136,21 +126,59 @@
       videoTag.play();
     }
 
-    // Secret admin code to reveal Kick button
-    const secretCode = '2427';
-    passwordInput.addEventListener('input', function() {
-      if (passwordInput.value === secretCode) {
-        document.getElementById('kickButton').style.display = 'inline-block';
-        console.log("Admin code accepted. Kick button now visible.");
-        passwordInput.value = ''; // Clear the input field for security
-      }
-    });
+    function toggleMute() {
+      videoTag.muted = !videoTag.muted;
+    }
+
+    function nextVideo() {
+      const selector = document.getElementById('videoSelector');
+      selector.selectedIndex = (selector.selectedIndex + 1) % selector.options.length;
+      selector.dispatchEvent(new Event('change'));
+    }
+
+    function changeBackground() {
+      const backgrounds = [
+        "url('Axolatol pic.jpg')",
+        "url('https://i.imgur.com/xg5rh52.jpg')",
+        "url('https://i.imgur.com/K5Yk3iJ.jpeg')"
+      ];
+      const random = Math.floor(Math.random() * backgrounds.length);
+      document.body.style.backgroundImage = backgrounds[random];
+    }
+
+    function hideUI() {
+      document.getElementById("adminButton").style.display = "none";
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("videoSelector").style.display = "none";
+      document.querySelector(".sync-button").style.display = "none";
+    }
 
     function kickEveryone() {
       document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
       setTimeout(() => {
-        window.location.href = "https://google.com"; // or any site
+        window.location.href = "https://google.com";
       }, 2500);
+    }
+
+    let adminUnlocked = false;
+
+    function showAdminPanel() {
+      if (!adminUnlocked) {
+        const code = prompt("Enter admin password:");
+        if (code === "2427") {
+          adminUnlocked = true;
+          document.getElementById("adminPanel").style.display = "flex";
+          console.log("Admin access granted.");
+        } else {
+          alert("Incorrect code.");
+        }
+      } else {
+        document.getElementById("adminPanel").style.display = "flex";
+      }
+    }
+
+    function closeAdminPanel() {
+      document.getElementById("adminPanel").style.display = "none";
     }
   </script>
 </body>
