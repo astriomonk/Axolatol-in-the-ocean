@@ -14,7 +14,6 @@
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      color: white;
       font-family: sans-serif;
     }
 
@@ -56,7 +55,7 @@
       object-fit: cover;
     }
 
-    .sync-button {
+    .sync-button, #kickButton {
       padding: 10px 25px;
       background: black;
       border: 2px solid #ff69b4;
@@ -64,14 +63,18 @@
       font-size: 18px;
       border-radius: 8px;
       cursor: pointer;
-      margin-bottom: 30px;
+      margin: 10px;
       box-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
       transition: background 0.2s, color 0.2s;
     }
 
-    .sync-button:hover {
+    .sync-button:hover, #kickButton:hover {
       background: #ff69b4;
       color: black;
+    }
+
+    #kickButton {
+      display: none;
     }
   </style>
 </head>
@@ -86,6 +89,7 @@
   </select>
 
   <button class="sync-button" onclick="syncVideo()">🔁 Sync Video</button>
+  <button id="kickButton" onclick="kickEveryone()">🚫 Kick Everyone</button>
 
   <div class="neon-frame">
     <video id="videoPlayer" controls autoplay>
@@ -96,11 +100,11 @@
 
   <script>
     const selector = document.getElementById('videoSelector');
-    const playerSource = document.getElementById('videoPlayer').querySelector('source');
     const videoTag = document.getElementById('videoPlayer');
+    const sourceTag = videoTag.querySelector('source');
 
     selector.addEventListener('change', function () {
-      playerSource.src = this.value;
+      sourceTag.src = this.value;
       videoTag.load();
       videoTag.play();
     });
@@ -108,6 +112,25 @@
     function syncVideo() {
       videoTag.currentTime = 0;
       videoTag.play();
+    }
+
+    // Secret admin code to reveal Kick button
+    let inputCode = '';
+    const secretCode = '2427';
+    document.addEventListener('keydown', function(e) {
+      inputCode += e.key;
+      if (inputCode.length > 10) inputCode = inputCode.slice(-10);
+      if (inputCode.includes(secretCode)) {
+        document.getElementById('kickButton').style.display = 'inline-block';
+        console.log("Admin code accepted. Kick button now visible.");
+      }
+    });
+
+    function kickEveryone() {
+      document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
+      setTimeout(() => {
+        window.location.href = "https://google.com"; // or any site
+      }, 2500);
     }
   </script>
 </body>
