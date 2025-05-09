@@ -12,8 +12,8 @@
       background: url('Axolatol pic.jpg') center center / cover no-repeat fixed;
       display: flex;
       flex-direction: column;
+      justify-content: flex-end;
       align-items: center;
-      justify-content: center;
       color: white;
       font-family: sans-serif;
     }
@@ -21,10 +21,11 @@
     h1 {
       color: #ff69b4;
       text-shadow: 0 0 10px #ff69b4;
-      margin-bottom: 10px;
       background-color: rgba(0, 0, 0, 0.6);
       padding: 10px 20px;
       border-radius: 10px;
+      position: absolute;
+      top: 20px;
     }
 
     select {
@@ -34,7 +35,7 @@
       padding: 8px;
       border-radius: 5px;
       font-size: 16px;
-      margin-bottom: 20px;
+      margin: 20px 0;
     }
 
     .neon-frame {
@@ -46,6 +47,7 @@
       border-radius: 12px;
       overflow: hidden;
       background-color: black;
+      margin-bottom: 40px;
     }
 
     video {
@@ -57,6 +59,7 @@
 </head>
 <body>
   <h1>Axolotl Video Hub</h1>
+
   <select id="videoSelector">
     <option value="https://pixeldrain.com/api/file/aboG1ktj">Axolotl 1</option>
     <option value="https://pixeldrain.com/api/file/fboWUnCW">Axolotl 2</option>
