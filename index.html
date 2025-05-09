@@ -115,20 +115,18 @@
     const videoTag = document.getElementById('videoPlayer');
     const sourceTag = videoTag.querySelector('source');
 
-    // Reset all videos function
-    function resetAllVideos() {
-      // Reset video by selecting the first video option
-      selector.selectedIndex = 0;
-      selector.dispatchEvent(new Event('change'));
-      videoTag.currentTime = 0;
-      videoTag.play();
-    }
-
     selector.addEventListener('change', function () {
       sourceTag.src = this.value;
       videoTag.load();
       videoTag.play();
     });
+
+    function resetAllVideos() {
+      selector.selectedIndex = 0;
+      selector.dispatchEvent(new Event('change'));
+      videoTag.currentTime = 0;
+      videoTag.play();
+    }
 
     function syncVideo() {
       videoTag.currentTime = 0;
@@ -140,7 +138,6 @@
     }
 
     function nextVideo() {
-      const selector = document.getElementById('videoSelector');
       selector.selectedIndex = (selector.selectedIndex + 1) % selector.options.length;
       selector.dispatchEvent(new Event('change'));
     }
@@ -164,7 +161,7 @@
     function showAdminPanel() {
       if (!adminUnlocked) {
         const code = prompt("Enter admin password:");
-        if (code === "2427") {
+        if (code === "ADK999") {
           adminUnlocked = true;
           document.getElementById("adminPanel").style.display = "flex";
           console.log("Admin access granted.");
