@@ -98,6 +98,7 @@
     <button class="sync-button" onclick="syncVideo()">🔁 Restart Video</button>
     <button class="sync-button" onclick="toggleMute()">🎵 Mute/Unmute Video</button>
     <button class="sync-button" onclick="nextVideo()">🎬 Skip to Next Video</button>
+    <button class="sync-button" onclick="toggleLoop()">🔁 Toggle Loop</button>
     <button class="sync-button" onclick="hideUI()">🧹 Hide UI</button>
     <button class="sync-button" onclick="kickEveryone()">🚫 Kick Everyone</button>
     <button class="sync-button" onclick="closeAdminPanel()">🔒 Close Panel</button>
@@ -140,6 +141,11 @@
     function nextVideo() {
       selector.selectedIndex = (selector.selectedIndex + 1) % selector.options.length;
       selector.dispatchEvent(new Event('change'));
+    }
+
+    function toggleLoop() {
+      videoTag.loop = !videoTag.loop;
+      alert("Looping is now " + (videoTag.loop ? "ON" : "OFF"));
     }
 
     function hideUI() {
