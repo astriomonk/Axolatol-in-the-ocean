@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -83,10 +83,10 @@
 <body>
 
   <select id="videoSelector">
+    <option value="https://dl.dropboxusercontent.com/scl/fi/3dboiy4graycyykmtylgn/Axolatol-in-the-Ocean.mp4">Axolotl in the Ocean</option>
     <option value="https://www.w3schools.com/html/mov_bbb.mp4">Sample Video 1</option>
     <option value="https://www.w3schools.com/html/movie.mp4">Sample Video 2</option>
-    <option value="https://filesamples.com/samples/video/mp4/sample_640x360.mp4">Sample Video 3</option>
-    <option value="https://filesamples.com/samples/video/mp4/sample_960x400_ocean_with_audio.mp4">Sample Video 4</option>
+    <option value="https://samplelib.com/lib/preview/mp4/sample-5s.mp4">Sample Video 3</option>
   </select>
 
   <button class="sync-button" onclick="syncVideo()">🔁 Sync Video</button>
@@ -94,19 +94,18 @@
 
   <div id="adminPanel">
     <h2>Admin Powers</h2>
-    <button class="sync-button" onclick="resetAllVideos()">🔄 Reset All Videos</button>
-    <button class="sync-button" onclick="syncVideo()">🔁 Restart Video</button>
-    <button class="sync-button" onclick="toggleMute()">🎵 Mute/Unmute Video</button>
-    <button class="sync-button" onclick="nextVideo()">🎬 Skip to Next Video</button>
+    <button class="sync-button" onclick="resetAllVideos()">🔄 Reset Video</button>
+    <button class="sync-button" onclick="toggleMute()">🔇 Mute/Unmute</button>
+    <button class="sync-button" onclick="nextVideo()">⏭️ Next Video</button>
     <button class="sync-button" onclick="toggleLoop()">🔁 Toggle Loop</button>
-    <button class="sync-button" onclick="hideUI()">🧹 Hide UI</button>
+    <button class="sync-button" onclick="hideUI()">🙈 Hide UI</button>
     <button class="sync-button" onclick="kickEveryone()">🚫 Kick Everyone</button>
     <button class="sync-button" onclick="closeAdminPanel()">🔒 Close Panel</button>
   </div>
 
   <div class="neon-frame">
     <video id="videoPlayer" controls autoplay>
-      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+      <source src="https://dl.dropboxusercontent.com/scl/fi/3dboiy4graycyykmtylgn/Axolatol-in-the-Ocean.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
@@ -122,16 +121,13 @@
       videoTag.play();
     });
 
-    function resetAllVideos() {
-      selector.selectedIndex = 0;
-      selector.dispatchEvent(new Event('change'));
+    function syncVideo() {
       videoTag.currentTime = 0;
       videoTag.play();
     }
 
-    function syncVideo() {
-      videoTag.currentTime = 0;
-      videoTag.play();
+    function resetAllVideos() {
+      syncVideo();
     }
 
     function toggleMute() {
@@ -145,14 +141,13 @@
 
     function toggleLoop() {
       videoTag.loop = !videoTag.loop;
-      alert("Looping is now " + (videoTag.loop ? "ON" : "OFF"));
+      alert("Loop is now " + (videoTag.loop ? "ON" : "OFF"));
     }
 
     function hideUI() {
       document.getElementById("adminButton").style.display = "none";
       document.getElementById("adminPanel").style.display = "none";
       document.getElementById("videoSelector").style.display = "none";
-      document.querySelector(".sync-button").style.display = "none";
     }
 
     function kickEveryone() {
@@ -170,9 +165,8 @@
         if (code === "ADK999") {
           adminUnlocked = true;
           document.getElementById("adminPanel").style.display = "flex";
-          console.log("Admin access granted.");
         } else {
-          alert("Incorrect code.");
+          alert("Incorrect password.");
         }
       } else {
         document.getElementById("adminPanel").style.display = "flex";
