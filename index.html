@@ -1,32 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Axolotl Video Hub</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      background: url('Axolatol pic.jpg') center center / cover no-repeat fixed;
+      background: #000;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: flex-start;
       align-items: center;
       font-family: sans-serif;
+      color: white;
     }
 
-    .neon-frame {
-      width: 70vw;
-      height: 39.375vw;
-      max-height: 60vh;
-      box-shadow: 0 0 15px #ff69b4, 0 0 25px #ff69b4, 0 0 40px #ff69b4;
+    h1 {
+      color: #ff69b4;
+      text-shadow: 0 0 10px #ff69b4;
+      margin: 20px;
+    }
+
+    select {
+      background: black;
+      border: 2px solid #ff69b4;
+      color: #ff69b4;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .video-container {
+      width: 80vw;
+      max-width: 1000px;
+      aspect-ratio: 16 / 9;
       border: 2px solid #ff69b4;
       border-radius: 12px;
+      box-shadow: 0 0 15px #ff69b4, 0 0 30px #ff69b4;
       overflow: hidden;
       background-color: black;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     video {
@@ -34,113 +51,35 @@
       height: 100%;
       object-fit: cover;
     }
-
-    .admin-panel, .admin-button {
-      padding: 10px 25px;
-      background: black;
-      border: 2px solid #ff69b4;
-      color: #ff69b4;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 10px;
-      box-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    .admin-button:hover, .admin-panel:hover {
-      background: #ff69b4;
-      color: black;
-    }
-
-    #adminControls {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #videoContainer.hidden {
-      display: none;
-    }
   </style>
 </head>
 <body>
+  <h1>Axolotl Video Hub</h1>
 
-  <div class="neon-frame" id="videoContainer">
-    <video id="videoPlayer" controls autoplay>
+  <select id="videoSelector">
+    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl Video 1</option>
+    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl Video 2</option>
+    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl Video 3</option>
+    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl Video 4</option>
+  </select>
+
+  <div class="video-container">
+    <video id="videoPlayer" controls autoplay loop>
       <source src="https://files.catbox.moe/7juk8a.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
 
-  <button class="admin-button" onclick="revealAdminPanel()">🔐 Enter Admin</button>
+  <script>
+    const selector = document.getElementById('videoSelector');
+    const video = document.getElementById('videoPlayer');
+    const source = video.querySelector('source');
 
-  <div id="adminControls">
-    <button class="admin-panel" onclick="toggleVideoVisibility()">👁️ Toggle Video</button>
-    <button class="admin-panel" onclick="syncVideo()">🔁 Restart Video</button>
-    <button class="admin-panel" onclick="toggleLoop()">🔂 Toggle Loop</button>
-    <button class="admin-panel" onclick="kickEveryone()">🚫 Kick Everyone</button>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAcWrh2b0sMtJboOgPTXJXhSnOT1YHH_Zg",
-      authDomain: "kick-everyone.firebaseapp.com",
-      projectId: "kick-everyone",
-      storageBucket: "kick-everyone.firebasestorage.app",
-      messagingSenderId: "623382049111",
-      appId: "1:623382049111:web:a3d4353921c611cda94e12",
-      measurementId: "G-KJ2W6N6J2D"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase();
-
-    const videoTag = document.getElementById('videoPlayer');
-
-    onValue(ref(db, 'admin/kick'), snapshot => {
-      if (snapshot.val() === true) {
-        document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
-        setTimeout(() => location.href = 'https://google.com', 2500);
-      }
+    selector.addEventListener('change', () => {
+      source.src = selector.value;
+      video.load();
+      video.play();
     });
-
-    onValue(ref(db, 'admin/restart'), snapshot => {
-      if (snapshot.val() === true) {
-        videoTag.currentTime = 0;
-        videoTag.play();
-        set(ref(db, 'admin/restart'), false);
-      }
-    });
-
-    function revealAdminPanel() {
-      const code = prompt("Enter Admin Code:");
-      if (code === "ADK999") {
-        document.getElementById("adminControls").style.display = "flex";
-      }
-    }
-
-    function toggleVideoVisibility() {
-      document.getElementById("videoContainer").classList.toggle("hidden");
-    }
-
-    function syncVideo() {
-      set(ref(db, 'admin/restart'), true);
-    }
-
-    function toggleLoop() {
-      videoTag.loop = !videoTag.loop;
-      alert("Loop is now " + (videoTag.loop ? "ON" : "OFF"));
-    }
-
-    function kickEveryone() {
-      set(ref(db, 'admin/kick'), true);
-      setTimeout(() => set(ref(db, 'admin/kick'), false), 3000);
-    }
   </script>
-
 </body>
 </html>
