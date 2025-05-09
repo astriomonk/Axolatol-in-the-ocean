@@ -94,11 +94,10 @@
 
   <div id="adminPanel">
     <h2>Admin Powers</h2>
+    <button class="sync-button" onclick="resetAllVideos()">🔄 Reset All Videos</button>
     <button class="sync-button" onclick="syncVideo()">🔁 Restart Video</button>
     <button class="sync-button" onclick="toggleMute()">🎵 Mute/Unmute Video</button>
     <button class="sync-button" onclick="nextVideo()">🎬 Skip to Next Video</button>
-    <input type="file" id="bgInput" accept="image/*" style="display: none;" onchange="uploadBackground(event)" />
-    <button class="sync-button" onclick="document.getElementById('bgInput').click()">🎨 Upload Background</button>
     <button class="sync-button" onclick="hideUI()">🧹 Hide UI</button>
     <button class="sync-button" onclick="kickEveryone()">🚫 Kick Everyone</button>
     <button class="sync-button" onclick="closeAdminPanel()">🔒 Close Panel</button>
@@ -115,6 +114,15 @@
     const selector = document.getElementById('videoSelector');
     const videoTag = document.getElementById('videoPlayer');
     const sourceTag = videoTag.querySelector('source');
+
+    // Reset all videos function
+    function resetAllVideos() {
+      // Reset video by selecting the first video option
+      selector.selectedIndex = 0;
+      selector.dispatchEvent(new Event('change'));
+      videoTag.currentTime = 0;
+      videoTag.play();
+    }
 
     selector.addEventListener('change', function () {
       sourceTag.src = this.value;
@@ -135,17 +143,6 @@
       const selector = document.getElementById('videoSelector');
       selector.selectedIndex = (selector.selectedIndex + 1) % selector.options.length;
       selector.dispatchEvent(new Event('change'));
-    }
-
-    function uploadBackground(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        document.body.style.backgroundImage = `url('${e.target.result}')`;
-      };
-      reader.readAsDataURL(file);
     }
 
     function hideUI() {
