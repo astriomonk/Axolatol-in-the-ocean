@@ -5,38 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Axolotl Video Hub</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
-      background: url('Axolatol pic.jpg') center center / cover no-repeat fixed;
+      background: #000;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
       align-items: center;
-      font-family: sans-serif;
+      color: #ff69b4;
     }
 
-    select {
-      background: black;
-      border: 2px solid #ff69b4;
-      color: #ff69b4;
-      padding: 8px;
-      border-radius: 5px;
-      font-size: 16px;
-      margin: 10px 0;
+    h1 {
+      margin-top: 20px;
+      text-shadow: 0 0 10px #ff69b4;
     }
 
     .neon-frame {
-      width: 70vw;
-      height: 39.375vw;
-      max-height: 60vh;
+      width: 80vw;
+      max-width: 960px;
+      aspect-ratio: 16/9;
+      border: 3px solid #ff69b4;
       box-shadow: 0 0 15px #ff69b4, 0 0 25px #ff69b4, 0 0 40px #ff69b4;
-      border: 2px solid #ff69b4;
+      margin: 20px;
       border-radius: 12px;
       overflow: hidden;
       background-color: black;
-      margin-bottom: 20px;
     }
 
     video {
@@ -45,136 +38,42 @@
       object-fit: cover;
     }
 
-    .sync-button {
-      padding: 10px 25px;
-      background: black;
-      border: 2px solid #ff69b4;
-      color: #ff69b4;
+    button {
+      margin: 10px;
+      padding: 10px 20px;
       font-size: 18px;
+      color: #ff69b4;
+      background-color: black;
+      border: 2px solid #ff69b4;
       border-radius: 8px;
       cursor: pointer;
-      margin: 10px;
-      box-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
-      transition: background 0.2s, color 0.2s;
+      box-shadow: 0 0 10px #ff69b4;
     }
 
-    .sync-button:hover {
-      background: #ff69b4;
+    button:hover {
+      background-color: #ff69b4;
       color: black;
-    }
-
-    #adminPanel {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 20px;
-      border-radius: 15px;
-      border: 2px solid #ff69b4;
-      box-shadow: 0 0 20px #ff69b4;
-      margin-top: 20px;
-    }
-
-    #adminPanel h2 {
-      color: #ff69b4;
     }
   </style>
 </head>
 <body>
 
-  <select id="videoSelector">
-    <option value="https://www.dropbox.com/scl/fi/3dboiy4graycyykmtylgn/Axolatol-in-the-Ocean.mp4?raw=1">Axolotl Video 1</option>
-    <option value="https://www.dropbox.com/scl/fi/3dboiy4graycyykmtylgn/Axolatol-in-the-Ocean.mp4?raw=1">Axolotl Video 2</option>
-    <option value="https://www.dropbox.com/scl/fi/3dboiy4graycyykmtylgn/Axolatol-in-the-Ocean.mp4?raw=1">Axolotl Video 3</option>
-    <option value="https://www.dropbox.com/scl/fi/3dboiy4graycyykmtylgn/Axolatol-in-the-Ocean.mp4?raw=1">Axolotl Video 4</option>
-  </select>
-
-  <button class="sync-button" onclick="syncVideo()">🔁 Sync Video</button>
-  <button id="adminButton" class="sync-button" onclick="showAdminPanel()">👑 Admin Panel</button>
-
-  <div id="adminPanel">
-    <h2>Admin Powers</h2>
-    <button class="sync-button" onclick="resetAllVideos()">🔄 Reset Video</button>
-    <button class="sync-button" onclick="toggleMute()">🔇 Mute/Unmute</button>
-    <button class="sync-button" onclick="nextVideo()">⏭️ Next Video</button>
-    <button class="sync-button" onclick="toggleLoop()">🔁 Toggle Loop</button>
-    <button class="sync-button" onclick="hideUI()">🙈 Hide UI</button>
-    <button class="sync-button" onclick="kickEveryone()">🚫 Kick Everyone</button>
-    <button class="sync-button" onclick="closeAdminPanel()">🔒 Close Panel</button>
-  </div>
+  <h1>Axolotl Video Hub</h1>
 
   <div class="neon-frame">
-    <video id="videoPlayer" controls autoplay>
-      <source src="https://www.dropbox.com/scl/fi/3dboiy4graycyykmtylgn/Axolatol-in-the-Ocean.mp4?raw=1" type="video/mp4">
+    <video id="videoPlayer" controls autoplay loop>
+      <source src="https://drive.google.com/uc?export=download&id=1H1YQUXq15eMkvqmXwzu6R-6rcedX8H4t" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
 
+  <button onclick="restartVideo()">🔁 Restart Video</button>
+
   <script>
-    const selector = document.getElementById('videoSelector');
-    const videoTag = document.getElementById('videoPlayer');
-    const sourceTag = videoTag.querySelector('source');
-
-    selector.addEventListener('change', function () {
-      sourceTag.src = this.value;
-      videoTag.load();
-      videoTag.play();
-    });
-
-    function syncVideo() {
-      videoTag.currentTime = 0;
-      videoTag.play();
-    }
-
-    function resetAllVideos() {
-      syncVideo();
-    }
-
-    function toggleMute() {
-      videoTag.muted = !videoTag.muted;
-    }
-
-    function nextVideo() {
-      selector.selectedIndex = (selector.selectedIndex + 1) % selector.options.length;
-      selector.dispatchEvent(new Event('change'));
-    }
-
-    function toggleLoop() {
-      videoTag.loop = !videoTag.loop;
-      alert("Loop is now " + (videoTag.loop ? "ON" : "OFF"));
-    }
-
-    function hideUI() {
-      document.getElementById("adminButton").style.display = "none";
-      document.getElementById("adminPanel").style.display = "none";
-      document.getElementById("videoSelector").style.display = "none";
-    }
-
-    function kickEveryone() {
-      document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
-      setTimeout(() => {
-        window.location.href = "https://google.com";
-      }, 2500);
-    }
-
-    let adminUnlocked = false;
-
-    function showAdminPanel() {
-      if (!adminUnlocked) {
-        const code = prompt("Enter admin password:");
-        if (code === "ADK999") {
-          adminUnlocked = true;
-          document.getElementById("adminPanel").style.display = "flex";
-        } else {
-          alert("Incorrect password.");
-        }
-      } else {
-        document.getElementById("adminPanel").style.display = "flex";
-      }
-    }
-
-    function closeAdminPanel() {
-      document.getElementById("adminPanel").style.display = "none";
+    function restartVideo() {
+      const video = document.getElementById('videoPlayer');
+      video.currentTime = 0;
+      video.play();
     }
   </script>
 
