@@ -97,7 +97,8 @@
     <button class="sync-button" onclick="syncVideo()">🔁 Restart Video</button>
     <button class="sync-button" onclick="toggleMute()">🎵 Mute/Unmute Video</button>
     <button class="sync-button" onclick="nextVideo()">🎬 Skip to Next Video</button>
-    <button class="sync-button" onclick="changeBackground()">🎨 Change Background</button>
+    <input type="file" id="bgInput" accept="image/*" style="display: none;" onchange="uploadBackground(event)" />
+    <button class="sync-button" onclick="document.getElementById('bgInput').click()">🎨 Upload Background</button>
     <button class="sync-button" onclick="hideUI()">🧹 Hide UI</button>
     <button class="sync-button" onclick="kickEveryone()">🚫 Kick Everyone</button>
     <button class="sync-button" onclick="closeAdminPanel()">🔒 Close Panel</button>
@@ -136,14 +137,15 @@
       selector.dispatchEvent(new Event('change'));
     }
 
-    function changeBackground() {
-      const backgrounds = [
-        "url('Axolatol pic.jpg')",
-        "url('https://i.imgur.com/xg5rh52.jpg')",
-        "url('https://i.imgur.com/K5Yk3iJ.jpeg')"
-      ];
-      const random = Math.floor(Math.random() * backgrounds.length);
-      document.body.style.backgroundImage = backgrounds[random];
+    function uploadBackground(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.body.style.backgroundImage = `url('${e.target.result}')`;
+      };
+      reader.readAsDataURL(file);
     }
 
     function hideUI() {
@@ -181,5 +183,6 @@
       document.getElementById("adminPanel").style.display = "none";
     }
   </script>
+
 </body>
 </html>
