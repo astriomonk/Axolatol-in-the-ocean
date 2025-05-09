@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Axolotl Video Hub</title>
   <style>
     html, body {
@@ -15,16 +15,6 @@
       justify-content: flex-end;
       align-items: center;
       font-family: sans-serif;
-    }
-
-    h1 {
-      color: #ff69b4;
-      text-shadow: 0 0 10px #ff69b4;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 10px 20px;
-      border-radius: 10px;
-      position: absolute;
-      top: 20px;
     }
 
     .neon-frame {
@@ -45,7 +35,7 @@
       object-fit: cover;
     }
 
-    button {
+    .admin-panel, .admin-button {
       padding: 10px 25px;
       background: black;
       border: 2px solid #ff69b4;
@@ -58,7 +48,7 @@
       transition: background 0.2s, color 0.2s;
     }
 
-    button:hover {
+    .admin-button:hover, .admin-panel:hover {
       background: #ff69b4;
       color: black;
     }
@@ -69,69 +59,88 @@
       align-items: center;
     }
 
-    #adminLogin {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      border: 2px solid #ff69b4;
-      border-radius: 8px;
-      padding: 5px;
-      background-color: black;
-      color: #ff69b4;
-    }
-
-    #adminLogin::placeholder {
-      color: #ff69b4;
+    #videoContainer.hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>Axolotl Video Hub</h1>
 
-  <input type="password" id="adminLogin" placeholder="Admin Code" oninput="checkAdmin(this.value)" />
-
-  <div class="neon-frame">
-    <video id="videoPlayer" controls autoplay loop>
-      <source src="https://drive.google.com/uc?export=download&id=1H1YQUXq15eMkvqmXwzu6R-6rcedX8H4t" type="video/mp4">
+  <div class="neon-frame" id="videoContainer">
+    <video id="videoPlayer" controls autoplay>
+      <source src="https://files.catbox.moe/7juk8a.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
 
-  <button onclick="restartVideo()">🔁 Restart Video</button>
-  <button onclick="toggleLoop()">🔁 Toggle Loop</button>
+  <button class="admin-button" onclick="revealAdminPanel()">🔐 Enter Admin</button>
 
   <div id="adminControls">
-    <button onclick="kickEveryone()">🚫 Kick Everyone</button>
-    <button onclick="alert('More admin powers coming soon!')">🛠 More Admin Powers</button>
+    <button class="admin-panel" onclick="toggleVideoVisibility()">👁️ Toggle Video</button>
+    <button class="admin-panel" onclick="syncVideo()">🔁 Restart Video</button>
+    <button class="admin-panel" onclick="toggleLoop()">🔂 Toggle Loop</button>
+    <button class="admin-panel" onclick="kickEveryone()">🚫 Kick Everyone</button>
   </div>
 
-  <script>
-    const video = document.getElementById('videoPlayer');
-    const adminControls = document.getElementById('adminControls');
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    function restartVideo() {
-      video.currentTime = 0;
-      video.play();
-    }
+    const firebaseConfig = {
+      apiKey: "AIzaSyAcWrh2b0sMtJboOgPTXJXhSnOT1YHH_Zg",
+      authDomain: "kick-everyone.firebaseapp.com",
+      projectId: "kick-everyone",
+      storageBucket: "kick-everyone.firebasestorage.app",
+      messagingSenderId: "623382049111",
+      appId: "1:623382049111:web:a3d4353921c611cda94e12",
+      measurementId: "G-KJ2W6N6J2D"
+    };
 
-    function toggleLoop() {
-      video.loop = !video.loop;
-      alert("Looping is now " + (video.loop ? "enabled" : "disabled"));
-    }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
 
-    function checkAdmin(code) {
-      if (code === 'ADK999') {
-        adminControls.style.display = 'flex';
-        alert('Admin access granted');
+    const videoTag = document.getElementById('videoPlayer');
+
+    onValue(ref(db, 'admin/kick'), snapshot => {
+      if (snapshot.val() === true) {
+        document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
+        setTimeout(() => location.href = 'https://google.com', 2500);
+      }
+    });
+
+    onValue(ref(db, 'admin/restart'), snapshot => {
+      if (snapshot.val() === true) {
+        videoTag.currentTime = 0;
+        videoTag.play();
+        set(ref(db, 'admin/restart'), false);
+      }
+    });
+
+    function revealAdminPanel() {
+      const code = prompt("Enter Admin Code:");
+      if (code === "ADK999") {
+        document.getElementById("adminControls").style.display = "flex";
       }
     }
 
+    function toggleVideoVisibility() {
+      document.getElementById("videoContainer").classList.toggle("hidden");
+    }
+
+    function syncVideo() {
+      set(ref(db, 'admin/restart'), true);
+    }
+
+    function toggleLoop() {
+      videoTag.loop = !videoTag.loop;
+      alert("Loop is now " + (videoTag.loop ? "ON" : "OFF"));
+    }
+
     function kickEveryone() {
-      document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
-      setTimeout(() => {
-        window.location.href = "https://google.com";
-      }, 2500);
+      set(ref(db, 'admin/kick'), true);
+      setTimeout(() => set(ref(db, 'admin/kick'), false), 3000);
     }
   </script>
+
 </body>
 </html>
