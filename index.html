@@ -76,6 +76,31 @@
     #kickButton {
       display: none;
     }
+
+    /* Password prompt styling */
+    #passwordPrompt {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border: 2px solid #ff69b4;
+      padding: 10px;
+      border-radius: 8px;
+      color: #ff69b4;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    #passwordInput {
+      background: black;
+      border: 2px solid #ff69b4;
+      color: #ff69b4;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
@@ -98,11 +123,18 @@
     </video>
   </div>
 
+  <!-- Password prompt -->
+  <div id="passwordPrompt">
+    Enter Admin Password:
+    <input type="password" id="passwordInput" placeholder="Enter Code">
+  </div>
+
   <script>
     const selector = document.getElementById('videoSelector');
     const videoTag = document.getElementById('videoPlayer');
     const sourceTag = videoTag.querySelector('source');
-
+    const passwordInput = document.getElementById('passwordInput');
+    
     selector.addEventListener('change', function () {
       sourceTag.src = this.value;
       videoTag.load();
@@ -115,14 +147,12 @@
     }
 
     // Secret admin code to reveal Kick button
-    let inputCode = '';
     const secretCode = '2427';
-    document.addEventListener('keydown', function(e) {
-      inputCode += e.key;
-      if (inputCode.length > 10) inputCode = inputCode.slice(-10);
-      if (inputCode.includes(secretCode)) {
+    passwordInput.addEventListener('input', function() {
+      if (passwordInput.value === secretCode) {
         document.getElementById('kickButton').style.display = 'inline-block';
         console.log("Admin code accepted. Kick button now visible.");
+        passwordInput.value = ''; // Clear the input field for security
       }
     });
 
