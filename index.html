@@ -90,6 +90,10 @@
       color: white;
       border-radius: 10px;
     }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -108,8 +112,8 @@
   <!-- Admin Unlock -->
   <button id="unlockAdminButton" onclick="unlockAdmin()">Unlock Admin</button>
 
-  <div class="neon-frame">
-    <iframe id="videoPlayer" width="100%" height="100%" src="https://www.youtube.com/embed/VIDEO_ID_1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <div class="neon-frame" id="videoFrame">
+    <iframe id="videoPlayer" width="100%" height="100%" src="https://www.youtube.com/embed/VIDEO_ID_1?autohide=1&showinfo=0&controls=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   </div>
 
   <div class="admin-panel" id="adminPanel">
@@ -123,6 +127,8 @@
 
     const selector = document.getElementById('videoSelector');
     const videoPlayer = document.getElementById('videoPlayer');
+    const videoFrame = document.getElementById('videoFrame');
+    const adminPanel = document.getElementById('adminPanel');
 
     // Handle video selection
     selector.addEventListener('change', function () {
@@ -141,10 +147,13 @@
       let inputCode = prompt('Enter Admin Code:');
       if (inputCode === 'ADK999') {
         isAdmin = true;
-        document.getElementById('adminPanel').style.display = 'block';
+        adminPanel.style.display = 'block';
         document.getElementById('kickButton').style.display = 'inline-block';
         console.log('Admin unlocked!');
         alert('Admin unlocked! You can now control the videos.');
+
+        // Hide the video when admin opens the control panel
+        videoFrame.classList.add('hidden');
       } else {
         alert('Incorrect code!');
       }
