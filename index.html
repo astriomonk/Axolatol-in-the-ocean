@@ -100,10 +100,10 @@
   <h1>Axolotl Video Hub</h1>
 
   <select id="videoSelector">
-    <option value="https://www.youtube.com/embed/VIDEO_ID_1">Axolotl 1</option>
-    <option value="https://www.youtube.com/embed/VIDEO_ID_2">Axolotl 2</option>
-    <option value="https://www.youtube.com/embed/VIDEO_ID_3">Axolotl 3</option>
-    <option value="https://www.youtube.com/embed/VIDEO_ID_4">Axolotl 4</option>
+    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl 1</option>
+    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl 2</option>
+    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl 3</option>
+    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl 4</option>
   </select>
 
   <button class="sync-button" onclick="syncVideo()">🔁 Sync Video</button>
@@ -113,7 +113,10 @@
   <button id="unlockAdminButton" onclick="unlockAdmin()">Unlock Admin</button>
 
   <div class="neon-frame" id="videoFrame">
-    <iframe id="videoPlayer" width="100%" height="100%" src="https://www.youtube.com/embed/VIDEO_ID_1?autohide=1&showinfo=0&controls=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <video id="videoPlayer" controls autoplay>
+      <source src="https://files.catbox.moe/7juk8a.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
 
   <div class="admin-panel" id="adminPanel">
@@ -133,13 +136,15 @@
     // Handle video selection
     selector.addEventListener('change', function () {
       videoPlayer.src = this.value;
+      videoPlayer.load();
+      videoPlayer.play();
     });
 
     // Sync Video Function (for all)
     function syncVideo() {
       const videoIframe = document.getElementById('videoPlayer');
-      videoIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-      videoIframe.contentWindow.postMessage('{"event":"command","func":"seekTo","args":[0]}', '*');
+      videoIframe.currentTime = 0;
+      videoIframe.play();
     }
 
     // Admin Unlock Function
