@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Axolotl Video Hub</title>
+  <title>Video For ADK</title>
   <style>
     html, body {
       margin: 0;
@@ -17,24 +17,21 @@
       font-family: sans-serif;
     }
 
-    h1 {
-      color: #ff69b4;
-      text-shadow: 0 0 10px #ff69b4;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 10px 20px;
-      border-radius: 10px;
-      position: absolute;
-      top: 20px;
-    }
-
-    select {
+    select, button {
       background: black;
       border: 2px solid #ff69b4;
       color: #ff69b4;
-      padding: 8px;
-      border-radius: 5px;
+      padding: 10px;
+      border-radius: 8px;
       font-size: 16px;
-      margin: 10px 0;
+      margin: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
+    }
+
+    select:hover, button:hover {
+      background: #ff69b4;
+      color: black;
     }
 
     .neon-frame {
@@ -55,122 +52,90 @@
       object-fit: cover;
     }
 
-    .sync-button, #kickButton, #unlockAdminButton {
-      padding: 10px 25px;
-      background: black;
-      border: 2px solid #ff69b4;
-      color: #ff69b4;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 10px;
-      box-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    .sync-button:hover, #kickButton:hover, #unlockAdminButton:hover {
-      background: #ff69b4;
-      color: black;
-    }
-
-    #kickButton {
+    #adminPanel {
       display: none;
-    }
-
-    #unlockAdminButton {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-    }
-
-    .admin-panel {
-      display: none;
-      background: rgba(0, 0, 0, 0.7);
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
-      color: white;
+      border: 2px solid #ff69b4;
       border-radius: 10px;
+      background-color: rgba(0,0,0,0.8);
+      color: #ff69b4;
     }
 
-    .hidden {
-      display: none;
+    #adminToggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Axolotl Video Hub</h1>
+  <button id="adminToggle">🔒 Unlock Admin</button>
 
-  <select id="videoSelector">
-    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl 1</option>
-    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl 2</option>
-    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl 3</option>
-    <option value="https://files.catbox.moe/7juk8a.mp4">Axolotl 4</option>
-  </select>
-
-  <button class="sync-button" onclick="syncVideo()">🔁 Sync Video</button>
-  <button id="kickButton" onclick="kickEveryone()">🚫 Kick Everyone</button>
-
-  <!-- Admin Unlock -->
-  <button id="unlockAdminButton" onclick="unlockAdmin()">Unlock Admin</button>
-
-  <div class="neon-frame" id="videoFrame">
-    <video id="videoPlayer" controls autoplay>
-      <source src="https://files.catbox.moe/7juk8a.mp4" type="video/mp4">
+  <div class="neon-frame" id="videoContainer">
+    <video id="videoPlayer" controls autoplay loop>
+      <source src="https://pixeldrain.com/api/file/LLjvs6s" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
 
-  <div class="admin-panel" id="adminPanel">
-    <h2>Admin Controls</h2>
-    <button onclick="syncVideo()">🔁 Sync Video (For All)</button>
+  <select id="videoSelector">
+    <option value="https://pixeldrain.com/api/file/LLjvs6s">Video 1</option>
+    <option value="https://pixeldrain.com/api/file/Cv8SsuaT">Video 2</option>
+    <option value="https://pixeldrain.com/api/file/dZ1w7yHZ">Video 3</option>
+    <option value="https://pixeldrain.com/api/file/81scnDVL">Video 4</option>
+  </select>
+
+  <button onclick="syncVideo()">🔁 Sync Video</button>
+
+  <div id="adminPanel">
+    <h2>Admin Panel</h2>
+    <button onclick="resetVideo()">🌀 Reset All Videos</button>
     <button onclick="kickEveryone()">🚫 Kick Everyone</button>
   </div>
 
   <script>
-    let isAdmin = false;
-
+    const video = document.getElementById('videoPlayer');
+    const source = video.querySelector('source');
     const selector = document.getElementById('videoSelector');
-    const videoPlayer = document.getElementById('videoPlayer');
-    const videoFrame = document.getElementById('videoFrame');
+    const adminToggle = document.getElementById('adminToggle');
     const adminPanel = document.getElementById('adminPanel');
+    const videoContainer = document.getElementById('videoContainer');
 
-    // Handle video selection
-    selector.addEventListener('change', function () {
-      videoPlayer.src = this.value;
-      videoPlayer.load();
-      videoPlayer.play();
+    selector.addEventListener('change', () => {
+      source.src = selector.value;
+      video.load();
+      video.play();
     });
 
-    // Sync Video Function (for all)
     function syncVideo() {
-      const videoIframe = document.getElementById('videoPlayer');
-      videoIframe.currentTime = 0;
-      videoIframe.play();
+      video.currentTime = 0;
+      video.play();
     }
 
-    // Admin Unlock Function
-    function unlockAdmin() {
-      let inputCode = prompt('Enter Admin Code:');
-      if (inputCode === 'ADK999') {
-        isAdmin = true;
-        adminPanel.style.display = 'block';
-        document.getElementById('kickButton').style.display = 'inline-block';
-        console.log('Admin unlocked!');
-        alert('Admin unlocked! You can now control the videos.');
-
-        // Hide the video when admin opens the control panel
-        videoFrame.classList.add('hidden');
-      } else {
-        alert('Incorrect code!');
-      }
+    function resetVideo() {
+      video.currentTime = 0;
+      video.load();
     }
 
-    // Kick Everyone Function
     function kickEveryone() {
       document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
       setTimeout(() => {
-        window.location.href = "https://google.com"; // or any site
+        window.location.href = "https://google.com";
       }, 2500);
     }
+
+    adminToggle.addEventListener('click', () => {
+      const pass = prompt("Enter Admin Code:");
+      if (pass === 'ADK999') {
+        adminPanel.style.display = 'flex';
+        videoContainer.style.display = 'none';
+        adminToggle.style.display = 'none';
+      } else {
+        alert("Wrong code.");
+      }
+    });
   </script>
 </body>
 </html>
