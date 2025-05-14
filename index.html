@@ -120,20 +120,20 @@
     }
 
     function kickEveryone() {
-      document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>You have been kicked!</h1>";
+      document.body.innerHTML = "<h1 style='color: pink; text-align: center; margin-top: 20%; font-size: 48px;'>Womp Womp!,You Got Kicked</h1>";
       setTimeout(() => {
         window.location.href = "https://google.com";
       }, 2500);
     }
 
     adminToggle.addEventListener('click', () => {
-      const pass = prompt("Enter Admin Code:");
+      const pass = prompt("Enter The Code ADK Member (Thats not the code BTW):");
       if (pass === 'ADK999') {
         adminPanel.style.display = 'flex';
         videoContainer.style.display = 'none';
         adminToggle.style.display = 'none';
       } else {
-        alert("Wrong code.");
+        alert("Your Stupid.");
       }
     });
   </script>
